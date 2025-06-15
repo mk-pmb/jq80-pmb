@@ -1,0 +1,35 @@
+{ "name": "jq80-pmb",
+  "version": "0.1.0",
+  "description": "Embrace and extend jQuery, taking inspiration from dom80-pmb.",
+  "keywords": [
+    "dom manipulation",
+    "jquery"
+  ],
+
+  "author": "M.K. (https://github.com/mk-pmb)",
+  "homepage": "https://github.com/mk-pmb/jq80-pmb/#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mk-pmb/jq80-pmb.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mk-pmb/jq80-pmb/issues"
+  },
+  "contributors": [],
+
+  "private": false, "license": "ISC",
+
+  "scripts": { "test": "bash test/all.sh" },
+  "directories": { "test": "test" },
+  "eslintConfig": { "extends": "nodejs-pmb", "ignorePatterns": ["dist/"] },
+
+  "dependencies": {},
+  "devDependencies": {
+    "eslint-config-nodejs-pmb": "^0.3.7",
+    "eslint-plugin-json-light-pmb": "^1.0.7",
+    "eslint-plugin-n": "^17.16.2"
+  },
+
+
+  "engines": { "npm": ">=7.0.0", "node": ">=16.0.0" }
+}
