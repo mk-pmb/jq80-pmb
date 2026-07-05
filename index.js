@@ -5,7 +5,8 @@
   const win = ((typeof window === 'object') && window) || false;
 
   function fail(e) { throw new Error(e); }
-  // function ores(x) { return x || ''; }
+  function isStr(x, no) { return (((typeof x) === 'string') || no); }
+  function ores(x) { return x || ''; }
   function orf(x) { return x || false; }
 
   // eslint-disable-next-line no-param-reassign
@@ -20,14 +21,17 @@
   EX.jq = ((win && win.jQuery)
     || fail.bind(null, 'Replace [jq80-pmb].jq with an actual jQuery!'));
 
+  function mkTxt(t) { return win.document.createTextNode(ores(t)); }
+
   Object.assign(EX, {
 
     setProp,
+    mkTxt,
 
 
     cce(x) {
-      const k = 'contentContainerElement';
       if (!x) { return false; }
+      const k = 'contentContainerElement';
       const c = x[k] || orf(x[0])[k];
       return (c && EX.jq(c)) || x;
     },
@@ -44,6 +48,7 @@
 
 
     skelDive(origCtx, tag, todo) {
+      const tr = 'jq80 skel: ';
       let ctx = origCtx;
       if (ctx === 0) { ctx = tag[0]; }
       todo.forEach(function eachTodoItem(task) {
@@ -52,6 +57,7 @@
         if (Array.isArray(task)) {
           return EX.skelDive(ctx, EX.cce(tag.children().last()), task);
         }
+        if (!isStr(task)) { fail(tr + 'Unsupported task: ' + task); }
         const c1 = task.slice(0, 1);
         const s1 = task.slice(1);
         if (c1 === '.') { return tag.addClass(s1.split(/\s|\./)); }
@@ -64,8 +70,9 @@
           const [, k, eq, v] = s1.split(/^([ -;@-~]*)(=|$)/);
           return tag.attr(k, eq ? v : true);
         }
+        if (c1 === ':') { return s1 && tag.append(EX.mkTxt(s1)); }
         if ((c1 === '<') && s1) { return EX(task).appendTo(tag); }
-        fail('jq80 skel: Unsupported task: ' + task);
+        fail(tr + 'Unsupported task: ' + task);
       });
       return tag;
     },
