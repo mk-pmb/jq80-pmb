@@ -4,7 +4,7 @@
 (function namespace() {
   const win = ((typeof window === 'object') && window) || false;
 
-  function fail(e) { throw new Error(e); }
+  function fail(e, a) { throw Object.assign(new Error(e), a); }
   function isStr(x, no) { return (((typeof x) === 'string') || no); }
   function ores(x) { return x || ''; }
   function orf(x) { return x || false; }
@@ -39,28 +39,33 @@
 
     skel(parent, rootTagSpec, ...topLevelTodo) {
       // This is an inferior remake of dom80-pmb's mighty `skel` function.
-      const rootTag = EX(rootTagSpec);
+      const rootTag = EX(rootTagSpec).first();
       if (parent) { rootTag.appendTo(parent); }
-      const ctx = rootTag[0];
-      EX.skelDive(ctx, rootTag, topLevelTodo);
-      return rootTag;
+      return EX.skelDive(0, rootTag, topLevelTodo);
     },
 
 
-    skelDive(origCtx, tag, todo) {
+    skelDive(origCtx, topTag, todo) {
       const tr = 'jq80 skel: ';
       let ctx = origCtx;
+      let tag = topTag;
       if (ctx === 0) { ctx = tag[0]; }
+      if (tag.length !== 1) {
+        fail(tr + 'Need a single root tag!', { ctx, tag, todo });
+      }
       todo.forEach(function eachTodoItem(task) {
         if (!task) { return; }
-        if (task.appendTo) { return task.appendTo(tag); }
-        if (Array.isArray(task)) {
-          return EX.skelDive(ctx, EX.cce(tag.children().last()), task);
+        if (task.appendTo) {
+          task.appendTo(topTag);
+          tag = EX.cce(task);
+          return;
         }
+        if (Array.isArray(task)) { return EX.skelDive(ctx, tag, task); }
         if (!isStr(task)) { fail(tr + 'Unsupported task: ' + task); }
         const c1 = task.slice(0, 1);
         const s1 = task.slice(1);
         if (c1 === '.') { return tag.addClass(s1.split(/\s|\./)); }
+        if (c1 === '#') { return tag.attr('id', s1); }
         if (c1 === '$') {
           if (!ctx.refs) { ctx.refs = {}; }
           ctx.refs[s1] = tag;
@@ -71,10 +76,13 @@
           return tag.attr(k, eq ? v : true);
         }
         if (c1 === ':') { return s1 && tag.append(EX.mkTxt(s1)); }
-        if ((c1 === '<') && s1) { return EX(task).appendTo(tag); }
+        if ((c1 === '<') && s1) {
+          tag = EX.jq(task).appendTo(topTag);
+          return;
+        }
         fail(tr + 'Unsupported task: ' + task);
       });
-      return tag;
+      return topTag;
     },
 
 
