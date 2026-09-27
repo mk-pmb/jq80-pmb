@@ -86,6 +86,24 @@
     },
 
 
+    stripBom(t) {
+      const c = (t && t.slice && t[0]);
+      if ((c === '\uFEFF') || (c === 0xFEFF)) { return t.slice(1); }
+      return t;
+    },
+
+    fetchedResponseToText: function f(r) {
+      if (!r) { return r; }
+      let t = r.text;
+      t = ((t && t.call) ? r.text() : r);
+      if (t.then && t.then.call) { return t.then(f); }
+      t = EX.stripBom(t);
+      return t;
+    },
+
+    fetchText(u, o) { return win.fetch(u, o).then(EX.fetchedResponseToText); },
+
+
   });
 
 

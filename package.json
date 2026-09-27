@@ -1,5 +1,5 @@
 { "name": "jq80-pmb",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Embrace and extend jQuery, taking inspiration from dom80-pmb.",
   "keywords": [
     "dom manipulation",
@@ -31,5 +31,5 @@
   },
 
 
-  "engines": { "npm": ">=7.0.0", "node": ">=16.0.0" }
+  "engines": { "npm": ">=7.0.0", "node": ">=24.0.0" }
 }
